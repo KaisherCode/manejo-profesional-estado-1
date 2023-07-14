@@ -1,12 +1,12 @@
 import React from 'react';
-import { UseState } from './UseState.js';
 import { ClassState } from './ClassState.js';
+import { UseState } from './UseState.js';
 
 function App() {
   return (
     <div className="App">
-      <useState />
-      <ClassState />
+      <UseState name="UseState" />
+      <ClassState name="ClassState" />
     </div>
   );
 }
