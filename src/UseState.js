@@ -1,22 +1,32 @@
 import React from "react";
 
+const SECURITY_CODE = 'paradigma'
+
 function UseState({ name }) {
-  const [error, setError] = React.useState(true)
+  const [value, setValue] = React.useState('')
+  const [error, setError] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     console.log("Empezando el efecto")
-    if (!!loading){
-      setTimeout(()=>{
+    if (!!loading) {
+      setTimeout(() => {
         console.log("Haciendo la velidación")
-        setLoading(false)
+        
+        if (value === SECURITY_CODE) {
+          setLoading(false)
+        } else {
+          setError(true)
+          setLoading(false)
+        }
         console.log("Terminando la validación")
-      },3000)
+      }, 3000)
     }
-    
-    console.log("Terminando el efecto")
-  },[loading])
 
+    console.log("Terminando el efecto")
+  }, [loading])
+
+  console.log(value)
   return (
     <div >
       <h2>Eliminar {name}</h2>
@@ -27,8 +37,16 @@ function UseState({ name }) {
       {loading && (
         <p>Cargando...</p>
       )}
-      <input placeholder="Código de seguridad" />
-      <button onClick={() => setLoading(true)}>Comprobar</button>
+      <input
+        placeholder="Código de seguridad"
+        value={value}
+        onChange={(event) => {
+          setValue(event.target.value)
+        }} />
+      <button
+        onClick={() => setLoading(true)}>
+        Comprobar
+      </button>
     </div>
   )
 }
