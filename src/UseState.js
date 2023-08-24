@@ -12,9 +12,10 @@ function UseState({ name }) {
     if (!!loading) {
       setTimeout(() => {
         console.log("Haciendo la velidación")
-        
+
         if (value === SECURITY_CODE) {
           setLoading(false)
+          setError(false)
         } else {
           setError(true)
           setLoading(false)
@@ -31,7 +32,7 @@ function UseState({ name }) {
     <div >
       <h2>Eliminar {name}</h2>
       <p>Por favor, escribe el código de seguridad.</p>
-      {error && (
+      {(error && !loading) && (
         <p>Error: el código es incorrecto</p>
       )}
       {loading && (
@@ -41,10 +42,14 @@ function UseState({ name }) {
         placeholder="Código de seguridad"
         value={value}
         onChange={(event) => {
+          // setError(false)
           setValue(event.target.value)
         }} />
       <button
-        onClick={() => setLoading(true)}>
+        onClick={() => {
+          setLoading(true)
+          // setError(false) //este fue
+        }}>
         Comprobar
       </button>
     </div>
