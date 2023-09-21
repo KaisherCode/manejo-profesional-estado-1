@@ -1,4 +1,3 @@
-
 import React from "react";
 
 const SECURITY_CODE = 'paradigma'
@@ -6,15 +5,17 @@ const SECURITY_CODE = 'paradigma'
 function UseReducer({ name }) {
   const [state, dispatch] = React.useReducer(reducer, initialState)
 
-  console.log(state)
-
-  // const onWrite = (newValue) => {
-  //   setState({
-  //     ...state,
-  //     value: newValue,
-  //   })
+  const onConfirm = () => dispatch({ type: actionTypes.confirm})
+  const onError = () => dispatch({ type: actionTypes.error })
+  const onCheck = () => dispatch({ type: actionTypes.check })
+  const onDelete = () => dispatch({ type: actionTypes.delete })
+  const onReset = () => dispatch({ type: actionTypes.reset })
+  // const onWrite = (event) => {
+  //   dispatch({ type: actionTypes.write, payload: event.target.value })
   // }
-
+  const onWrite = ({target:{value}}) => {
+    dispatch({ type: actionTypes.write, payload: value })
+  }
 
   React.useEffect(() => {
     console.log("Empezando el efecto")
@@ -24,9 +25,9 @@ function UseReducer({ name }) {
         console.log("Haciendo la velidación")
 
         if (state.value === SECURITY_CODE) {
-          dispatch({ type: 'CONFIRM' })
+          onConfirm()
         } else {
-          dispatch({ type: 'ERROR' })
+          onError()
         }
         console.log("Terminando la validación")
       }, 3000)
@@ -49,15 +50,13 @@ function UseReducer({ name }) {
         <input
           placeholder="Código de seguridad"
           value={state.value}
-          onChange={(event) => {
-            dispatch({ type: 'WRITE', payload: event.target.value })
-            // onWrite(event.target.value)
-          }} />
+          // onChange={(event) => {
+          //   dispatch({ type: actionTypes.write, payload: event.target.value })
+          //   onWrite(event.target.value)
+          // }} 
+          onChange={onWrite}/>
         <button
-          onClick={() => {
-            dispatch({ type: 'CHECK' })
-            // onCheck()
-          }}>
+          onClick={onCheck}>
           Comprobar
         </button>
       </div>
@@ -67,17 +66,11 @@ function UseReducer({ name }) {
       <>
         <p>¿Seguro que quieres eliminar UseState?</p>
         <button
-          onClick={() => {
-            dispatch({ type: 'DELETE' })
-            // onDelete()
-          }}>
+          onClick={onDelete}>
           Sí, Eliminar
         </button>
         <button
-          onClick={() => {
-            dispatch({ type: 'RESET' })
-            // onReset()
-          }}>
+          onClick={onReset}>
           No, Volver
         </button>
       </>
@@ -87,16 +80,22 @@ function UseReducer({ name }) {
       <>
         <p>Eliminando con éxito</p>
         <button
-          onClick={() => {
-            dispatch({ type: 'RESET' })
-            // onReset()
-          }}
+          onClick={onReset}
         >
           Resetear, volver atrás
         </button>
       </>
     )
   }
+}
+
+const actionTypes = {
+  confirm: 'CONFIRM',
+  error: 'ERROR',
+  write: 'WRITE',
+  check: 'CHECK',
+  delete: 'DELETE',
+  reset: 'RESET',
 }
 
 const initialState = {
@@ -107,31 +106,31 @@ const initialState = {
   confirmed: false,
 }
 
-const reducerObject = (state,payload) => ({
-  'CONFIRM': {
+const reducerObject = (state, payload) => ({
+  [actionTypes.confirm]: {
     ...state,
     error: false,
     loading: false,
     confirmed: true,
   },
-  'ERROR': {
+  [actionTypes.error]: {
     ...state,
     error: true,
     loading: false,
   },
-  'WRITE':{
+  [actionTypes.write]: {
     ...state,
     value: payload
   },
-  'CHECK': {
+  [actionTypes.check]: {
     ...state,
     loading: true,
   },
-  'DELETE': {
+  [actionTypes.delete]: {
     ...state,
     deleted: true,
   },
-  'RESET': {
+  [actionTypes.reset]: {
     ...state,
     confirmed: false,
     deleted: false,
@@ -140,7 +139,7 @@ const reducerObject = (state,payload) => ({
 })
 const reducer = (state, action) => {
   if (reducerObject(state)[action.type]) {
-    return reducerObject(state,action.payload)[action.type]
+    return reducerObject(state, action.payload)[action.type]
   } else {
     return state;
   }
